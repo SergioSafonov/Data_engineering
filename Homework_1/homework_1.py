@@ -9,10 +9,6 @@ from requests.exceptions import HTTPError
 def rd_dreams_run(config):
 
     try:
-        # check date folder
-        process_date = config['payload']
-        os.makedirs(os.path.join(process_date), exist_ok=True)
-
         # read authentication data from config
         auth_url = config['url'] + config['auth_endpoint']
         headers = {"content-type": f"{config['content-type']}"}
@@ -23,21 +19,27 @@ def rd_dreams_run(config):
         token_request.raise_for_status()
         token = token_request.json()['access_token']
 
-        # read API data from config
-        api_url = config['url'] + config['endpoint']
-        api_headers = {"content-type": f"{config['content-type']}", "Authorization": f"{config['auth_prefix']}" + token}
-        used_data = {"date": f"{process_date}"}
+        # check date folder
+        config_date = config['payload']
+        for process_date in config_date:
 
-        # request API data
-        result = requests.get(api_url, headers=api_headers, data=json.dumps(used_data))
-        result.raise_for_status()
+            os.makedirs(os.path.join(process_date), exist_ok=True)
 
-        # dump API data to json file
-        dir_name = process_date
-        file_name = 'first_2_values.json'
-        with open(os.path.join('.', dir_name, file_name), 'w') as json_file:
-            result_data = result.json()
-            json.dump(result_data, json_file)
+            # read API data from config
+            api_url = config['url'] + config['endpoint']
+            api_headers = {"content-type": f"{config['content-type']}", "Authorization": f"{config['auth_prefix']}" + token}
+            used_data = {"date": f"{process_date}"}
+
+            # request API data
+            result = requests.get(api_url, headers=api_headers, data=json.dumps(used_data))
+            result.raise_for_status()
+
+            # dump API data to json file
+            dir_name = process_date
+            file_name = 'api_values.json'
+            with open(os.path.join('.', dir_name, file_name), 'w') as json_file:
+                result_data = result.json()
+                json.dump(result_data, json_file)
 
     except HTTPError:
         print('Code error!')
