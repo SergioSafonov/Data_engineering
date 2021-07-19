@@ -61,7 +61,7 @@ def rd_dreams_run(process_date):
 
 def postgres_copy(table_name):
 
-    file_name = table_name + '.csv'
+    file_name = table_name + '.tsv'
     result_dir = os.path.join('/', 'home', 'user', 'api', 'postgres_data')
     os.makedirs(os.path.join(result_dir), exist_ok=True)
 
