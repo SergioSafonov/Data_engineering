@@ -1,0 +1,20 @@
+currency_app:
+  url: "http://api.exchangeratesapi.io/v1/"
+  access_key: "a0ec6e79d368336768d78dd4bfc06e1f"
+  symbols:
+    - 'USD'
+    - 'GBP'
+    - 'RUB'
+    - 'UAH'
+    - 'PLN'
+  directory: "./data"
+
+rd_dreams_app:
+  url: "https://robot-dreams-de-api.herokuapp.com"
+  content-type: "application/json"
+  username: "rd_dreams"
+  password: "djT6LasE"
+  auth_endpoint: "/auth"
+  endpoint: "/out_of_stock"
+  auth_prefix: "JWT "
+
