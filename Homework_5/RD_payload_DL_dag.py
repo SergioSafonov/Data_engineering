@@ -14,12 +14,14 @@ from airflow.operators.dummy_operator import DummyOperator
 from hdfs import InsecureClient
 
 
-def rd_dreams_run(process_date, **kwargs):
+# def rd_dreams_run(process_date, **kwargs):
+def rd_dreams_run(**kwargs):
+
     global authentication_token
 
     exec_date = date.isoformat(kwargs["execution_date"])
 
-    file_name = f"api_values_{process_date}.json"
+    file_name = 'api_values.json'
     result_dir = os.path.join('/', 'bronze', 'rd_payload', exec_date)
 
     config_path = Config(os.path.join('/', 'home', 'user', 'airflow', 'plugins', 'config.yaml'))
@@ -44,7 +46,7 @@ def rd_dreams_run(process_date, **kwargs):
         api_url = config_data['url'] + config_data['endpoint']
         api_headers = {"content-type": f"{config_data['content-type']}",
                        "Authorization": f"{config_data['auth_prefix']}" + authentication_token}
-        processed_data = {"date": f"{process_date}"}
+        processed_data = {"date": f"{exec_date}"}
 
         # request API data
         result = requests.get(api_url, headers=api_headers, data=json.dumps(processed_data), timeout=10)
@@ -67,31 +69,30 @@ def rd_dreams_run(process_date, **kwargs):
         print('Error data API request!')
 
 
-default_args = {
-    'owner': 'airflow',
-    'params': {
-        'payload_date1': '2021-01-02',
-        'payload_date2': '2021-01-03'
-    }
-}
+# default_args = {
+#     'owner': 'airflow',
+#     'params': {
+#         'payload_date1': '2021-01-02',
+#         'payload_date2': '2021-01-03'
+#     }
+# }
 
 RD_payload_DL_dag = DAG(
     dag_id='RD_payload_DL_dag',
     description='DAG for getting payload data from RD API to Bronze Data Lake',
-    default_args=default_args,
+    # default_args=default_args,
     start_date=datetime(2021, 7, 23, 1, 00),
     end_date=datetime(2021, 9, 23, 1, 00),
     schedule_interval='@daily'
 )
 
 
-def group_payload(used_date):
-    return PythonOperator(
-        task_id=f"RD_payload_DL_{used_date}_task",
+PythonTask = PythonOperator(
+        task_id=f"RD_payload_DL_task",
         dag=RD_payload_DL_dag,
         python_callable=rd_dreams_run,
-        op_kwargs={'process_date': used_date},
-        task_concurrency=3,
+        # op_kwargs={'process_date': used_date},
+        task_concurrency=1,
         provide_context=True
     )
 
@@ -99,5 +100,5 @@ def group_payload(used_date):
 dummy1 = DummyOperator(task_id="dummy1", dag=RD_payload_DL_dag)
 dummy2 = DummyOperator(task_id="dummy2", dag=RD_payload_DL_dag)
 
-for payload_date in RD_payload_DL_dag.params.values():
-    dummy1 >> group_payload(payload_date) >> dummy2
+# for payload_date in RD_payload_DL_dag.params.values():
+dummy1 >> PythonTask >> dummy2

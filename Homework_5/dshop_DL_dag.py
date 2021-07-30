@@ -21,10 +21,11 @@ postgres_creds = {
 
 def postgres_dshop_dl(table_name, **kwargs):
 
-    exec_date = date.isoformat(kwargs["execution_date"])
+    # exec_date = date.isoformat(kwargs["execution_date"])
 
     file_name = table_name + '.csv'
-    result_dir = os.path.join('/', 'bronze', 'postgres', 'dshop', exec_date)
+    # result_dir = os.path.join('/', 'bronze', 'postgres', 'dshop', exec_date)
+    result_dir = os.path.join('/', 'bronze', 'postgres', 'dshop')
     file_path = os.path.join(result_dir, file_name)
 
     # open HDFS Data Lake client
