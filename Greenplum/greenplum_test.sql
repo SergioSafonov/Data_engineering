@@ -1,4 +1,5 @@
 select version();
+
 /*
 drop TABLE if exists public.payment;
 
