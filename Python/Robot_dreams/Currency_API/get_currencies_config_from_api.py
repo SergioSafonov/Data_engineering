@@ -2,7 +2,7 @@ import json
 import os
 import requests  # previously run in Terminal: >pip3.8 install requests
 
-from config import Config
+from Config.config import Config
 from requests.exceptions import HTTPError
 from datetime import date
 
@@ -35,7 +35,7 @@ def app(config_set, process_date=None):
 
 # for direct call this function app()
 if __name__ == '__main__':
-    config = Config(os.path.join('.', 'config.yaml'))
+    config = Config(os.path.join('..', 'Config', 'config.yaml'))
     print(config.get_config('currency_app'))
 
     date_list = ['2021-06-20', '2021-06-21']

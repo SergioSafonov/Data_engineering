@@ -2,7 +2,7 @@ import requests
 import os
 import json
 
-from config import Config
+from Config.config import Config
 from requests.exceptions import HTTPError
 from datetime import date
 
@@ -46,10 +46,11 @@ def rd_dreams_run(config_data, process_date, token):
 
         # request API data
         result = requests.get(api_url, headers=api_headers, data=json.dumps(used_data), timeout=10)
+        print(result)
         result.raise_for_status()
 
         # dump API data to json file
-        with open(os.path.join(process_date, file_name), 'w') as json_file:
+        with open(os.path.join('.', process_date, file_name), 'w') as json_file:
             result_data = result.json()
             json.dump(result_data, json_file)
 
@@ -58,11 +59,11 @@ def rd_dreams_run(config_data, process_date, token):
 
 
 if __name__ == '__main__':
-    pay_date = ['2021-01-02']
+    pay_date = ['2021-07-02']
     # pay_date = ['2021-01-02', '2021-01-03']
     payload_dates = get_dates(pay_date)
 
-    conf = Config(os.path.join('.', 'config.yaml'))
+    conf = Config(os.path.join('..', 'Config', 'config.yaml'))
     auth_token = get_auth_token(
         config_data=conf.get_config('rd_dreams_app')
     )
