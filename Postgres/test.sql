@@ -1,3 +1,5 @@
+use pagila;
+
 select count(*) from payment p;		-- 16 049
 
 select * from payment p;

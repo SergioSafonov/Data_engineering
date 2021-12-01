@@ -11,7 +11,7 @@ def app():
      print(response.json())
      print(type(response.json))      # class method
 
-     with open('./data/RUB.json', 'w') as f:
+     with open('../data/latest/RUB.json', 'w') as f:
          data = response.json()
          rates = data['rates']
          json.dump(rates, f)

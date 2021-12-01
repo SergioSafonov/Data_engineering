@@ -10,9 +10,11 @@ def app():
         response = requests.get(url)
         print(response.status_code)
 
-        dir_name = 'data/'
+        dir_name = os.path.join('../data/latest/')
+        os.makedirs(dir_name, exist_ok=True)
+
         file_name = f'{currency}_to_EUR.json'
-        with open(os.path.join('.', dir_name, file_name), 'w') as f:
+        with open(os.path.join(dir_name, file_name), 'w') as f:
             data = response.json()
             rates = data['rates']
             json.dump(rates, f)

@@ -1,15 +1,31 @@
-import requests
-import os
 import json
+import os
+import sys
+import requests
+
+from datetime import date
+from datetime import timedelta
+
+from requests.exceptions import HTTPError
 
 from Config.config import Config
-from requests.exceptions import HTTPError
-from datetime import date
 
 
 def get_dates(payload_date=None):
     if not payload_date:
-        payload_date = f"['{str(date.today())}']"
+        argv_len = len(sys.argv) - 1  # get command line argument length.
+
+        if argv_len < 1:
+            params = str(date.today() - timedelta(days=30))
+        else:
+            params = ''
+            for i in range(argv_len):  # loop in all arguments.
+                params = params + sys.argv[i + 1]
+
+                if i + 1 < argv_len:
+                    params = f"{params} "
+
+        payload_date = list(params.split(" "))
 
     return payload_date
 
@@ -35,8 +51,8 @@ def get_auth_token(config_data):
 def rd_dreams_run(config_data, process_date, token):
     try:
         # check date folder
-        os.makedirs(os.path.join(process_date), exist_ok=True)
-        file_name = 'api_values.json'
+        data_path = os.path.join('..', config_data['directory'], process_date)
+        os.makedirs(data_path, exist_ok=True)
 
         # read API data from config_data
         api_url = config_data['url'] + config_data['endpoint']
@@ -46,11 +62,12 @@ def rd_dreams_run(config_data, process_date, token):
 
         # request API data
         result = requests.get(api_url, headers=api_headers, data=json.dumps(used_data), timeout=10)
-        print(result)
+        # print(result)
         result.raise_for_status()
 
         # dump API data to json file
-        with open(os.path.join('.', process_date, file_name), 'w') as json_file:
+        file_name = 'api_values.json'
+        with open(os.path.join(data_path, file_name), 'w') as json_file:
             result_data = result.json()
             json.dump(result_data, json_file)
 
@@ -58,10 +75,11 @@ def rd_dreams_run(config_data, process_date, token):
         print('Error data API request!')
 
 
+# run with parameters: '2021-07-02 2021-07-03'
 if __name__ == '__main__':
-    pay_date = ['2021-07-02']
-    # pay_date = ['2021-01-02', '2021-01-03']
-    payload_dates = get_dates(pay_date)
+    # pay_date = ['2021-07-02', '2021-07-03']
+    # payload_dates = get_dates(pay_date)
+    payload_dates = get_dates()
 
     conf = Config(os.path.join('..', 'Config', 'config.yaml'))
     auth_token = get_auth_token(

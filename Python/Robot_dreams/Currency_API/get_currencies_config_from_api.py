@@ -11,7 +11,8 @@ def app(config_set, process_date=None):
     if not process_date:
         process_date = str(date.today())
 
-    os.makedirs(os.path.join(config_set['directory'], process_date), exist_ok=True)
+    data_path = os.path.join('..', config_set['directory'], process_date)
+    os.makedirs(data_path, exist_ok=True)
 
     try:
         for currency in config_set['symbols']:
@@ -24,7 +25,7 @@ def app(config_set, process_date=None):
             response.raise_for_status()
 
             file_name = f'{currency}_to_EUR.json'
-            with open(os.path.join(config_set['directory'], process_date, file_name), 'w') as json_file:
+            with open(os.path.join(data_path, file_name), 'w') as json_file:
                 data = response.json()
                 rates = data['rates']
                 json.dump(rates, json_file)
