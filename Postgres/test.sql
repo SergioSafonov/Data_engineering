@@ -1,10 +1,10 @@
-use pagila;
+select version();
+
+-- use pagila;
 
 select count(*) from payment p;		-- 16 049
 
 select * from payment p;
-
-select version();
 
 select * from test;
 
