@@ -59,9 +59,9 @@ with open('./data/sample_file2.json', 'w') as json_file2:
 # good way to point file path
 dir_name = 'data/'
 file_name = 'sample_file2.json'
-with open(os.path.join('.', dir_name, file_name), 'w') as json_file2:
+with open(os.path.join('../Start', dir_name, file_name), 'w') as json_file2:
     json.dump(py_dict, json_file2)
-print(os.path.join('.', 'data', 'sample_file2.json'))
+print(os.path.join('../Start', 'data', 'sample_file2.json'))
 
 
 

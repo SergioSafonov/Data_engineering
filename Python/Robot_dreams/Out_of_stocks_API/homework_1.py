@@ -13,9 +13,9 @@ from Config.config import Config
 
 def get_dates(payload_date=None):
     if not payload_date:
-        argv_len = len(sys.argv) - 1  # get command line argument length.
+        argv_len = len(sys.argv) - 1    # get command line argument length.
 
-        if argv_len < 1:
+        if argv_len < 1:                # if no data list parameters -> use date - month()
             params = str(date.today() - timedelta(days=30))
         else:
             params = ''
@@ -25,7 +25,7 @@ def get_dates(payload_date=None):
                 if i + 1 < argv_len:
                     params = f"{params} "
 
-        payload_date = list(params.split(" "))
+        payload_date = list(params.split(" "))      # list of date parameters
 
     return payload_date
 

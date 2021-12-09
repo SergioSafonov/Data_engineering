@@ -1,16 +1,15 @@
 select version();
 
--- use pagila;
+-- use postgres;
 
-select count(*) from payment p;		-- 16 049
-
-select * from payment p;
-
-select * from test;
+create table test (id int, name varchar(12));
 
 insert into test values (1, 'a');
 insert into test values (2, 'b');
 insert into test values (3, 'c');
+
+select * from test;
+------------------------------------------------------------
 
 create table test2 (id int, name varchar(12));
 
