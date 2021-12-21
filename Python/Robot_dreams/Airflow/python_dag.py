@@ -1,23 +1,14 @@
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
+
 from datetime import datetime
-
-
-def py_func(**kwargs):
-    # **kwargs - get any function params
-    # from some_file import py_func
-    print('Hello from inside Python function')
-    print(f'Param: {kwargs["execution_date"]}')
-    a = 10
-    a = a * a * a
-    print(a)
-
+from python_func import py_func       # run inside Airflow. python_func.py at ~/airflow/plugins/
 
 python_dag = DAG(
     dag_id='python_dag',
     description='Our Python DAG',
-    start_date=datetime(2021, 7, 7, 14, 30),
-    end_date=datetime(2021, 10, 7, 14, 30),
+    start_date=datetime(2021, 12, 15, 14, 30),
+    end_date=datetime(2022, 12, 15, 14, 30),
     schedule_interval='@daily'
 )
 

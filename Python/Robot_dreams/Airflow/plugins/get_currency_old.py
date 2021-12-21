@@ -1,15 +1,15 @@
-import os
-import requests
 import json
 import logging
+import os
+import requests
 
-from requests.exceptions import HTTPError
+from requests import HTTPError
+# / - absolute path, . - current path
 
 
-def get_currency():
-
-    process_date = "2021-07-07"
-    directory = os.path.join('home', 'user', 'api', process_date)
+def def_currency():
+    process_date = "2021-07-08"
+    directory = os.path.join('data', process_date)  # /home/user/data/
     currencies = ['UAH', 'GBP', 'USD', 'PLN', 'RUB']
     url = "http://api.exchangeratesapi.io/v1/"
     url = url + '/' + process_date
@@ -19,7 +19,6 @@ def get_currency():
 
     try:
         for currency in currencies:
-
             logging.info(f"Processing {currency} for {process_date}")
 
             params = {'access_key': access_key, 'symbols': currency}
@@ -34,10 +33,4 @@ def get_currency():
                 json.dump(rates, json_file)
 
     except HTTPError as e:
-        # print('Currency API Error!')
-        # print(e)
         logging.error(e)
-
-
-if __name__ == '__main__':
-    get_currency()

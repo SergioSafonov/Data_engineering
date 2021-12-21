@@ -1,10 +1,12 @@
 import json
 import os
-import requests     # previously run in Terminal: >pip3.8 install requests
+import requests  # previously run in Terminal: >pip3.8 install requests
+
 
 def app():
+    currencies = ['AED', 'AUD', 'CAD', 'CHF', 'CZK', 'GBP', 'HRK', 'IDR', 'ILS', 'INR', 'JPY', 'NOK', 'SEK', 'USD',
+                  'ZAR']
 
-    currencies = ['USD', 'GBP', 'RUB', 'UAH', 'PLN']
     for currency in currencies:
         url = f"http://api.exchangeratesapi.io/v1/latest?access_key=a0ec6e79d368336768d78dd4bfc06e1f&symbols={currency}"
         response = requests.get(url)
@@ -23,4 +25,3 @@ def app():
 # for direct call this function app()
 if __name__ == '__main__':
     app()
-

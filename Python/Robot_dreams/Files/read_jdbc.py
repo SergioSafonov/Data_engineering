@@ -46,14 +46,14 @@ def read_jdbc():
         password='secret')
 
     cursor = pg_connection.cursor()
-    # copy query from table test to sample.csv
+    # copy query from table test to sample2.csv
     query = 'select * from test where id < 3'
     with open(file=os.path.join('..', 'data', 'files', 'sample2.csv'), mode='w') as csv_file:
         cursor.copy_expert('COPY ({0}) TO STDOUT WITH HEADER CSV'.format(query), csv_file)
 
     with psycopg2.connect(**pg_creds) as pg_connection:
         cursor = pg_connection.cursor()
-        # copy query from table test to sample.csv
+        # copy query from table test to sample3.csv
         with open(file=os.path.join('..', 'data', 'files', 'sample3.csv'), mode='w') as csv_file:
             cursor.copy_expert('COPY (select * from test where id < 3) TO STDOUT WITH HEADER CSV', csv_file)
 
