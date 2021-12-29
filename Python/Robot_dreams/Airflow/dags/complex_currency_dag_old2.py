@@ -29,6 +29,7 @@ for currency in currencies:
         endpoint="2021-12-02",
         data={'access_key': "a0ec6e79d368336768d78dd4bfc06e1f", 'symbols': currency},
         xcom_push=True,
-        save=True
+        save=True,
+        save_path="data"
     )
     dummy1 >> t1 >> dummy2

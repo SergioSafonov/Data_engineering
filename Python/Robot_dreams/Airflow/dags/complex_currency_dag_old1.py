@@ -19,6 +19,6 @@ t1 = ComplexHttpOperator(
     endpoint="2021-12-01",
     data={'access_key': "a0ec6e79d368336768d78dd4bfc06e1f", 'symbols': "USD"},
     xcom_push=True,
-    save=True
-    #   save_path="2021-12-01"
+    save=True,
+    save_path="data"
 )
