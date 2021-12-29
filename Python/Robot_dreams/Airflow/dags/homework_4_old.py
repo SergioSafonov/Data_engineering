@@ -7,6 +7,7 @@ from requests.exceptions import HTTPError
 from datetime import datetime
 
 from airflow import DAG
+from airflow.exceptions import AirflowException
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.postgres_operator import PostgresHook

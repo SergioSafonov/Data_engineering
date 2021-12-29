@@ -6,15 +6,15 @@ import psycopg2
 from hdfs import InsecureClient     # library docs https://hdfscli.readthedocs.io/en/latest/index.html
 
 postgres_creds = {
-    'host': '192.168.88.138',
+    'host': '192.168.88.22',
     'port': 5432,
-    'database': 'postgres',
+    'database': 'dshop',
     'user': 'pguser',
     'password': 'secret'
 }
 
 greenplum_creds = {
-    'host': '192.168.88.138',
+    'host': '192.168.88.22',
     'port': '5433',
     'database': 'postgres',
     'user': 'gpuser',
@@ -31,16 +31,18 @@ def app():
     with psycopg2.connect(**postgres_creds) as postgres_connection:
         cursor = postgres_connection.cursor()
 
-        with client_hdfs.write(os.path.join('/', 'test', 'users.csv')) as csv_file:         # write to HDFS csv file
-            client_hdfs.delete(os.path.join('/', 'test', 'users.csv'), recursive=False)
-            cursor.copy_expert("COPY users(id,name) TO STDOUT WITH HEADER CSV", csv_file)   # Postgres table
+        with client_hdfs.write(os.path.join('/', 'test', 'clients.csv')) as csv_file:         # write to HDFS csv file
+            client_hdfs.delete(os.path.join('/', 'test', 'clients.csv'), recursive=False)
+            # Postgres table
+            cursor.copy_expert("COPY public.clients(client_id,fullname) TO STDOUT WITH HEADER CSV", csv_file)
 
     # copy data file from HDFS to Greenplum
     with psycopg2.connect(**greenplum_creds) as greenplum_connection:
         cursor = greenplum_connection.cursor()
 
-        with client_hdfs.read(os.path.join('/', 'test', 'users.csv')) as csv_file:     # read csv file
-            cursor.copy_expert("COPY users(id,name) FROM STDIN WITH HEADER CSV", csv_file)   # write to Greenplum table
+        with client_hdfs.read(os.path.join('/', 'test', 'clients.csv')) as csv_file:     # read csv file
+            # write to Greenplum table
+            cursor.copy_expert("COPY public.clients(client_id,fullname) FROM STDIN WITH HEADER CSV", csv_file)
 
 
 if __name__ == '__main__':

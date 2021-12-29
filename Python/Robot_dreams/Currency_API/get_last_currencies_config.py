@@ -26,7 +26,7 @@ def get_currencies(config_set, process_date=None):
             params = {'access_key': config_set['access_key'], 'base': base_currency, 'symbols': currency}
 
             response = requests.get(url, params=params, timeout=10)
-            print(response.status_code)  # if 400 - client error
+            # print(response.status_code)  # if 400 - client error
             response.raise_for_status()
 
             file_name = f'{currency}_{base_currency}.json'
@@ -44,9 +44,9 @@ if __name__ == '__main__':
     config = Config(os.path.join('..', 'Config', 'config.yaml'))
     config_data = config.get_config('currency_app')
 
-#    get_currencies(config_data)                    # get last currencies rates
+#   get_currencies(config_data)                    # get last currencies rates
 
-#    date_list = ['2021-12-18', '2021-12-19']       # get for date currency rates
+#   date_list = ['2021-12-18', '2021-12-19']       # get for date currency rates
     daysago = 30
     for i in range(1, daysago):
         dt = str(date.today() - timedelta(days=i))

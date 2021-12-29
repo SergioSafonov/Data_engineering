@@ -79,4 +79,18 @@ select payment_id,count(*)	from public.payment3 group by payment_id;		-- DISTRIB
 select staff_id,count(*) from public.payment group by staff_id;				-- 2	DISTRIBUTED RANDOMLY			34,251	(38,715) s
 select staff_id,count(*) from public.payment2 group by staff_id;			-- 2	DISTRIBUTED BY (payment_id)		4,677	(4,341) s
 select staff_id,count(*) from public.payment3 group by staff_id;			-- 2	DISTRIBUTED BY (staff_id)		4,265	(4,130) s
+-------------------------------------------------------------------------------------------
 
+drop TABLE public.clients;
+
+CREATE TABLE public.clients (
+	client_id serial4 NOT NULL,
+	fullname varchar(127) NULL
+)
+WITH (
+	orientation=column,
+	compresstype=zlib,
+	compresslevel=7,
+	appendonly=true
+)
+DISTRIBUTED BY (client_id);

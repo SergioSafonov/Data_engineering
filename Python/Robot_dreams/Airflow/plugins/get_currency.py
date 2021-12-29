@@ -3,7 +3,7 @@ import logging
 import os
 import requests
 
-from Config.config import Config
+from config import Config
 from requests import HTTPError
 # / - absolute path, . - current path
 

@@ -1,13 +1,25 @@
 currency_app:
   url: "http://api.exchangeratesapi.io/v1/"
+  last_url: "latest"
   access_key: "a0ec6e79d368336768d78dd4bfc06e1f"
+  base: "EUR"
   symbols:
-    - 'USD'
+    - 'AED'
+    - 'AUD'
+    - 'CAD'
+    - 'CHF'
+    - 'CZK'
     - 'GBP'
-    - 'RUB'
-    - 'UAH'
-    - 'PLN'
-  directory: "./data"
+    - 'HRK'
+    - 'IDR'
+    - 'ILS'
+    - 'INR'
+    - 'JPY'
+    - 'NOK'
+    - 'SEK'
+    - 'USD'
+    - 'ZAR'
+  directory: "data"
 
 rd_dreams_app:
   url: "https://robot-dreams-de-api.herokuapp.com"
@@ -17,4 +29,5 @@ rd_dreams_app:
   auth_endpoint: "/auth"
   endpoint: "/out_of_stock"
   auth_prefix: "JWT "
+  directory: "data"
 
