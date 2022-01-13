@@ -21,3 +21,15 @@ rd_dreams_app:
   auth_prefix: "JWT "
   directory: "data"
 
+daily_etl:
+  sources:
+    api:
+      - "api name"
+    postgresql:
+      - film
+      - film_actor
+      - actor
+      - category
+      - film_category
+      - language
+
