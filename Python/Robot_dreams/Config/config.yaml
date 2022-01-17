@@ -25,11 +25,17 @@ daily_etl:
   sources:
     api:
       - "api name"
-    postgresql:
+    postgres_pagila:
       - film
       - film_actor
       - actor
       - category
       - film_category
       - language
+    postgres_dshop:
+      - aisles
+      - clients
+      - departments
+      - orders
+      - products
 
