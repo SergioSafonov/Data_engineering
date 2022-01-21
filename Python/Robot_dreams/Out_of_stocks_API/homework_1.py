@@ -77,9 +77,8 @@ def rd_dreams_run(config_data, process_date, token):
 
 # run with parameters: '2021-07-02 2021-07-03'
 if __name__ == '__main__':
-    # pay_date = ['2021-07-02', '2021-07-03']
-    # payload_dates = get_dates(pay_date)
-    payload_dates = get_dates()
+    payload_dates = ['2021-07-02', '2021-07-03']
+    # payload_dates = get_dates()
 
     conf = Config(os.path.join('..', 'Config', 'config.yaml'))
     auth_token = get_auth_token(

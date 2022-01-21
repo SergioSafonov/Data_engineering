@@ -15,7 +15,7 @@ def app():
         dir_name = os.path.join('../data/latest/')
         os.makedirs(dir_name, exist_ok=True)
 
-        file_name = f'{currency}_to_EUR.json'
+        file_name = f'{currency}_EUR.json'
         with open(os.path.join(dir_name, file_name), 'w') as f:
             data = response.json()
             rates = data['rates']

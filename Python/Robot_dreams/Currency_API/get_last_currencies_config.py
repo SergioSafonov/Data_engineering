@@ -2,7 +2,7 @@ import os
 import json
 import requests  # previously run in Terminal: >pip3.8 install requests
 
-from config import Config
+from Config.config import Config
 from requests.exceptions import HTTPError
 
 from datetime import date

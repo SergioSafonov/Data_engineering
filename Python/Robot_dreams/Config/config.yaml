@@ -20,6 +20,9 @@ rd_dreams_app:
   endpoint: "/out_of_stock"
   auth_prefix: "JWT "
   directory: "data"
+  payload_dates:
+    - '2021-07-05'
+    - '2021-07-06'
 
 daily_etl:
   sources:
