@@ -29,10 +29,10 @@ daily_etl:
     api:
       - "api name"
     postgres_pagila:
-      - film
-      - film_actor
       - actor
       - category
+      - film
+      - film_actor
       - film_category
       - language
     postgres_dshop:

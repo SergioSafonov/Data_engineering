@@ -1,7 +1,6 @@
 import os
 import psycopg2
 import logging
-import pyspark
 
 from hdfs import InsecureClient
 from airflow.hooks.base_hook import BaseHook

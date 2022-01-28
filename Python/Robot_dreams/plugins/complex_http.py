@@ -39,8 +39,8 @@ class CurrencyAPISaveHttpOperator(SimpleHttpOperator):  # define child extended 
             if date_dir == 'latest':
                 date_dir = str(date.today() - timedelta(days=1))
 
-            # '/home/user/data/USD/[yyyy-mm-dd]/'
-            directory = os.path.join('/', 'home', 'user', self.save_path, self.data['symbols'], date_dir)
+            # '/home/user/data/[yyyy-mm-dd]/'
+            directory = os.path.join('/', 'home', 'user', self.save_path, date_dir)
             os.makedirs(directory, exist_ok=True)
             file_name = self.data['symbols'] + '_' + self.data['base'] + '.json'  # added var file_name
 
