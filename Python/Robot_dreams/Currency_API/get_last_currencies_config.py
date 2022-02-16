@@ -11,7 +11,7 @@ from datetime import timedelta
 
 def get_currencies(config_set, process_date=None):
     if not process_date:
-        process_date = config_set['last_url']       # latest
+        process_date = config_set['last_url']  # latest
 
     data_path = os.path.join('..', config_set['directory'], process_date)
     os.makedirs(data_path, exist_ok=True)
@@ -40,16 +40,15 @@ def get_currencies(config_set, process_date=None):
 
 
 if __name__ == '__main__':
-#   config = Config(os.path.join('/', 'home', 'user', 'airflow', 'plugins', 'config.yaml'))
+    #   config = Config(os.path.join('/', 'home', 'user', 'airflow', 'plugins', 'config.yaml'))
     config = Config(os.path.join('..', 'Config', 'config.yaml'))
     config_data = config.get_config('currency_app')
 
-#   get_currencies(config_data)                    # get last currencies rates
+    #   get_currencies(config_data)                    # get last currencies rates
 
-#   date_list = ['2021-12-18', '2021-12-19']       # get for date currency rates
+    #   date_list = ['2021-12-18', '2021-12-19']       # get for date currency rates
     daysago = 30
     for i in range(1, daysago):
         dt = str(date.today() - timedelta(days=i))
         print(dt)
         get_currencies(config_data, dt)
-

@@ -9,7 +9,7 @@ from datetime import date
 
 def app(config_set, process_date=None):
     if not process_date:
-        process_date = str(date.today())
+        process_date = 'latest'  # str(date.today())
 
     data_path = os.path.join('..', config_set['directory'], process_date)
     os.makedirs(data_path, exist_ok=True)
@@ -18,13 +18,14 @@ def app(config_set, process_date=None):
         for currency in config_set['symbols']:
             url = config_set['url'] + '/' + process_date
             params = {'access_key': config_set['access_key'], 'symbols': currency}
+            base_cur = config_set['base']
 
             response = requests.get(url, params=params)
             # print(response)  if 400 - client error
             # response.status_code
             response.raise_for_status()
 
-            file_name = f'{currency}_to_EUR.json'
+            file_name = f'{currency}_{base_cur}.json'
             with open(os.path.join(data_path, file_name), 'w') as json_file:
                 data = response.json()
                 rates = data['rates']
@@ -41,4 +42,5 @@ if __name__ == '__main__':
 
     date_list = ['2021-06-20', '2021-06-21']
     for dt in date_list:
-        app(config.get_config('currency_app'), dt)
+        app(config.get_config('currency_app'), dt)      # date_list
+        app(config.get_config('currency_app'))          # latest date

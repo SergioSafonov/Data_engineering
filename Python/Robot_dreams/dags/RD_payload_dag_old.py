@@ -37,7 +37,7 @@ def rd_dreams_run(process_date):
 
     try:
         # check date folder
-        result_dir = os.path.join(start_dir, 'api', process_date)
+        result_dir = os.path.join(start_dir, 'data', 'rd_payload', process_date)
         os.makedirs(os.path.join(result_dir), exist_ok=True)
 
         # read API data from config_data
@@ -66,7 +66,7 @@ def postgres_copy(table_name):
     result_dir = os.path.join('/', 'home', 'user', 'data', 'postgres_data', 'dshop')
     os.makedirs(os.path.join(result_dir), exist_ok=True)
 
-    postgres = PostgresHook(postgres_conn_id='dshop_postgres')
+    postgres = PostgresHook(postgres_conn_id='postgres_dshop')
     postgres.bulk_dump(table_name, os.path.join(result_dir, file_name))
 
 

@@ -9,7 +9,7 @@ currency_app:
     - 'USD'
     - 'PLN'
     - 'RUB'
-  directory: "data"
+  directory: "data/currencies"
 
 rd_dreams_app:
   url: "https://robot-dreams-de-api.herokuapp.com"
@@ -19,7 +19,7 @@ rd_dreams_app:
   auth_endpoint: "/auth"
   endpoint: "/out_of_stock"
   auth_prefix: "JWT "
-  directory: "data"
+  directory: "data/rd_payload"
   payload_dates:
     - '2021-07-05'
     - '2021-07-06'

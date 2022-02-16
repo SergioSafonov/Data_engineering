@@ -11,8 +11,8 @@ class CurrencyAPISaveHttpOperator(SimpleHttpOperator):  # define child extended 
 
     def __init__(self, save, save_path, *args, **kwargs):
         super(CurrencyAPISaveHttpOperator, self).__init__(*args, **kwargs)  # init as a parent - SimpleHttpOperator
-        self.save_flag = save                                               # added save_flag as input parameter
-        self.save_path = save_path                                          # added save_path as input parameter
+        self.save_flag = save  # added save_flag as input parameter
+        self.save_path = save_path  # added save_path as input parameter
 
     def execute(self, context):
         # initially copied from SimpleHttpOperator execute method
@@ -34,12 +34,12 @@ class CurrencyAPISaveHttpOperator(SimpleHttpOperator):  # define child extended 
             if not self.response_check(response):
                 raise AirflowException("Response check returned False.")
 
-        if self.save_flag:              # added check for save_flag
+        if self.save_flag:  # added check for save_flag
             date_dir = self.endpoint
             if date_dir == 'latest':
-                date_dir = str(date.today() - timedelta(days=1))
+                date_dir = str(date.today())  # - timedelta(days=1))
 
-            # '/home/user/data/[yyyy-mm-dd]/'
+            # '/home/user/data/currencies/[yyyy-mm-dd]/'
             directory = os.path.join('/', 'home', 'user', self.save_path, date_dir)
             os.makedirs(directory, exist_ok=True)
             file_name = self.data['symbols'] + '_' + self.data['base'] + '.json'  # added var file_name
@@ -49,5 +49,5 @@ class CurrencyAPISaveHttpOperator(SimpleHttpOperator):  # define child extended 
                 data = response.json()
                 json.dump(data, json_file)
 
-        if self.xcom_push_flag:         # if need to store result into etc Scoms
+        if self.xcom_push_flag:  # if need to store result into etc Scoms
             return response.text

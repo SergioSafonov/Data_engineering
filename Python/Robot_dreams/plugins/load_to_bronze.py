@@ -12,11 +12,12 @@ def load_to_bronze(table):
     file_name = table + '.csv'
     hdfs_conn = BaseHook.get_connection('datalake_hdfs')
     pg_conn = BaseHook.get_connection('oltp_postgres')
+    db_name = 'pagila'
 
     pg_creds = {
         'host': pg_conn.host,
         'port': pg_conn.port,
-        'database': 'pagila',
+        'database': db_name,
         'user': pg_conn.login,
         'password': pg_conn.password
     }
@@ -28,7 +29,7 @@ def load_to_bronze(table):
     with psycopg2.connect(**pg_creds) as pg_connection:
         cursor = pg_connection.cursor()
 
-        with client.write(os.path.join('/', 'datalake', 'bronze', 'pagila', file_name)) as csv_file:
+        with client.write(os.path.join('/', 'datalake', 'bronze', db_name, file_name)) as csv_file:
             cursor.copy_expert(f"COPY {table} TO STDOUT WITH HEADER CSV", csv_file)
 
     logging.info("Successfully loaded")
@@ -37,13 +38,15 @@ def load_to_bronze(table):
 
 def load_to_bronze_spark(table):
     pg_conn = BaseHook.get_connection('oltp_postgres')
+    db_name = 'pagila'
 
-    pg_url = f"jdbc:postgresql://{pg_conn.host}:{pg_conn.port}/pagila"
+    pg_url = f"jdbc:postgresql://{pg_conn.host}:{pg_conn.port}/{db_name}"
     pg_properties = {"user": pg_conn.login, "password": pg_conn.password}
 
     spark = SparkSession.builder \
         .config('spark.driver.extraClassPath'
-                , '/home/user/shared_folder/postgres/postgresql-42.2.23.jar') \
+                #        , '/home/user/shared_folder/postgres/postgresql-42.2.23.jar') \
+                , '/home/user/Distrib/postgresql-42.2.23.jar') \
         .master('local') \
         .appName('lesson_14') \
         .getOrCreate()
@@ -52,7 +55,7 @@ def load_to_bronze_spark(table):
 
     table_df = spark.read.jdbc(pg_url, table=table, properties=pg_properties)
     table_df.write.parquet(
-        os.path.join('/', 'datalake', 'bronze', 'pagila', table),
+        os.path.join('/', 'datalake', 'bronze', db_name, table),
         mode="overwrite")
 
     logging.info("Successfully loaded")

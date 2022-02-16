@@ -8,7 +8,7 @@ def app():
         url = "http://api.exchangeratesapi.io/v1/symbols?access_key=a0ec6e79d368336768d78dd4bfc06e1f"
         response = requests.get(url)
 
-        dir_name = os.path.join('../data/')
+        dir_name = os.path.join('../data/currencies')
         os.makedirs(dir_name, exist_ok=True)
 
         file_name = 'symbols.json'

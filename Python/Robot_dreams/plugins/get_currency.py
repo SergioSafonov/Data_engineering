@@ -9,8 +9,10 @@ from requests import HTTPError
 
 def def_currency():
     process_date = "2021-07-09"
-    directory = os.path.join('data', process_date)  # /home/user/data/
+    directory = os.path.join('/', 'home', 'user', 'data', 'currencies', process_date)
     currencies = ['UAH', 'GBP', 'USD', 'PLN', 'RUB']
+    base_cur = 'EUR'
+
     url = "http://api.exchangeratesapi.io/v1/"
     url = url + '/' + process_date
     access_key = "a0ec6e79d368336768d78dd4bfc06e1f"
@@ -26,7 +28,7 @@ def def_currency():
             response = requests.get(url, params=params)
             response.raise_for_status()
 
-            file_name = f'{currency}_EUR.json'
+            file_name = f'{currency}_{base_cur}.json'
             with open(os.path.join(directory, file_name), 'w') as json_file:
                 data = response.json()
                 rates = data['rates']

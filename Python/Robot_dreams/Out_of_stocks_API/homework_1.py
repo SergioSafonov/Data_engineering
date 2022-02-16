@@ -75,19 +75,19 @@ def rd_dreams_run(config_data, process_date, token):
         print('Error data API request!')
 
 
-# run with parameters: '2021-07-02 2021-07-03'
 if __name__ == '__main__':
-    payload_dates = ['2021-07-02', '2021-07-03']
     # payload_dates = get_dates()
 
     conf = Config(os.path.join('..', 'Config', 'config.yaml'))
+    conf_data = conf.get_config('rd_dreams_app')
+
     auth_token = get_auth_token(
-        config_data=conf.get_config('rd_dreams_app')
+        config_data=conf_data
     )
 
-    for dt in payload_dates:
+    for dt in conf_data['payload_dates']:
         rd_dreams_run(
-            config_data=conf.get_config('rd_dreams_app'),
+            config_data=conf_data,
             process_date=dt,
             token=auth_token
         )

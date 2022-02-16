@@ -10,7 +10,7 @@ from airflow.operators.dummy_operator import DummyOperator
 from hdfs import InsecureClient
 
 postgres_creds = {
-    'host': '192.168.56.101',
+    'host': '192.168.1.56',
     'port': 5432,
     'database': 'dshop',
     'user': 'pguser',

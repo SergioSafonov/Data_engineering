@@ -19,6 +19,7 @@ def rd_dreams_run(process_date):
     start_dir = os.path.join('/', 'home', 'user')
     conf = Config(os.path.join(start_dir, 'airflow', 'plugins', 'config.yaml'))
     config_data = conf.get_config('rd_dreams_app')
+    data_path = config_data['directory']
 
     try:
         # read authentication data from config
@@ -36,7 +37,7 @@ def rd_dreams_run(process_date):
 
     try:
         # check date folder
-        result_dir = os.path.join(start_dir, 'data', 'rd_payload', process_date)
+        result_dir = os.path.join(start_dir, data_path, process_date)
         os.makedirs(os.path.join(result_dir), exist_ok=True)
 
         # read API data from config_data
