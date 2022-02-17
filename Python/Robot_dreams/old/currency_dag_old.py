@@ -13,7 +13,7 @@ from requests import HTTPError
 
 def get_currency():
     process_date = "2021-07-08"
-    directory = os.path.join('data', 'currencies', process_date)      # /home/user/data/currencies/
+    directory = os.path.join('/', 'home', 'user', 'data', 'currencies', process_date)
     currencies = ['UAH', 'GBP', 'USD', 'PLN', 'RUB']
     base_cur = 'EUR'
     url = "http://api.exchangeratesapi.io/v1/"

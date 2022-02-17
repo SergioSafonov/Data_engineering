@@ -7,12 +7,15 @@ from airflow.hooks.base_hook import BaseHook
 from pyspark.sql import SparkSession
 
 
-def load_to_bronze(table):
+def load_to_bronze_hadoop(table):
     # not resolved hadoop connection at Virtual machine!
     file_name = table + '.csv'
+
     hdfs_conn = BaseHook.get_connection('datalake_hdfs')
+    client = InsecureClient("http://" + hdfs_conn.host, user=hdfs_conn.login)
+
     pg_conn = BaseHook.get_connection('oltp_postgres')
-    db_name = 'pagila'
+    db_name = 'dshop'  # pg_conn.schema
 
     pg_creds = {
         'host': pg_conn.host,
@@ -23,8 +26,6 @@ def load_to_bronze(table):
     }
 
     logging.info(f"Writing table {table} from {pg_conn.host} to Bronze")
-
-    client = InsecureClient("http://" + hdfs_conn.host, user=hdfs_conn.login)
 
     with psycopg2.connect(**pg_creds) as pg_connection:
         cursor = pg_connection.cursor()
@@ -38,18 +39,18 @@ def load_to_bronze(table):
 
 def load_to_bronze_spark(table):
     pg_conn = BaseHook.get_connection('oltp_postgres')
-    db_name = 'pagila'
+    db_name = 'pagila'  # pg_conn.schema
 
     pg_url = f"jdbc:postgresql://{pg_conn.host}:{pg_conn.port}/{db_name}"
     pg_properties = {"user": pg_conn.login, "password": pg_conn.password}
 
     spark = SparkSession.builder \
         .config('spark.driver.extraClassPath'
-                #        , '/home/user/shared_folder/postgres/postgresql-42.2.23.jar') \
-                , '/home/user/Distrib/postgresql-42.2.23.jar') \
+                , '/home/user/shared_folder/Distrib/postgresql-42.2.23.jar') \
         .master('local') \
         .appName('lesson_14') \
         .getOrCreate()
+    # , '/home/user/shared_folder/postgres/postgresql-42.2.23.jar') \
 
     logging.info(f"Writing table {table} from {pg_conn.host} to Bronze")
 

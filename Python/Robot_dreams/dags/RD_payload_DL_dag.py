@@ -2,16 +2,17 @@ import requests
 import os
 import json
 
-from config import Config
 from requests.exceptions import HTTPError
-from datetime import date
 from datetime import datetime
 
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.dummy_operator import DummyOperator
+from airflow.exceptions import AirflowException
 
 from hdfs import InsecureClient
+
+from get_config import get_config
 
 
 # def rd_dreams_run(process_date, **kwargs):
@@ -20,13 +21,16 @@ def rd_dreams_run(**kwargs):
     global authentication_token
 
     # exec_date = date.isoformat(kwargs["execution_date"])
-    exec_date = '2021-07-04'
+    exec_date = '2021-07-08'
 
     file_name = 'api_values.json'
     result_dir = os.path.join('/', 'datalake', 'bronze', 'rd_payload', exec_date)
 
-    config_path = Config(os.path.join('/', 'home', 'user', 'airflow', 'plugins', 'config.yaml'))
-    config_data = config_path.get_config('rd_dreams_app')
+    config = get_config()
+    config_data = config.get('rd_dreams_app')
+
+    # config_path = Config(os.path.join('/', 'home', 'user', 'airflow', 'plugins', 'config.yaml'))
+    # config_data = config_path.get_config('rd_dreams_app')
 
     try:
         # read authentication data from config
@@ -41,6 +45,7 @@ def rd_dreams_run(**kwargs):
 
     except HTTPError:
         print('Error get auth token!')
+        raise AirflowException("Error get auth token!")
 
     try:
         # read API data from config_data
@@ -63,11 +68,13 @@ def rd_dreams_run(**kwargs):
 
         # dump API data to HDFS Bronze json file
         with client_hdfs.write(os.path.join(result_dir, file_name),
-                               encoding='utf-8', overwrite=True, blocksize=1048576, replication=1) as result_DL_file:
+                               encoding='utf-8', overwrite=True, blocksize=1048576, replication=1) \
+                as result_DL_file:
             json.dump(result_data, result_DL_file)
 
     except HTTPError:
         print('Error data API request!')
+        raise AirflowException("Error data API request!")
 
 
 # default_args = {

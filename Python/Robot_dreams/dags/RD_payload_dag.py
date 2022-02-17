@@ -1,8 +1,8 @@
 import requests
 import os
 import json
+import logging
 
-from config import Config
 from requests.exceptions import HTTPError
 from datetime import datetime
 
@@ -10,15 +10,17 @@ from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.dummy_operator import DummyOperator
 
-payload_dates = ['2021-07-02', '2021-07-03']
+from get_config import get_config, get_payload_dates
+
+config = get_config()
+config_data = config.get('rd_dreams_app')
+payload_dates = get_payload_dates()
 
 
 def rd_dreams_run(process_date):
     global authentication_token
 
     start_dir = os.path.join('/', 'home', 'user')
-    conf = Config(os.path.join(start_dir, 'airflow', 'plugins', 'config.yaml'))
-    config_data = conf.get_config('rd_dreams_app')
     data_path = config_data['directory']
 
     try:
@@ -32,8 +34,11 @@ def rd_dreams_run(process_date):
         token_request.raise_for_status()
         authentication_token = token_request.json()['access_token']
 
+        logging.info("Successfully got authentication token")
+
     except HTTPError:
         print('Error get auth token!')
+        raise Exception
 
     try:
         # check date folder
@@ -47,17 +52,23 @@ def rd_dreams_run(process_date):
         processed_data = {"date": f"{process_date}"}
 
         # request API data
+        logging.info(f"Start request api data for{process_date}")
         result = requests.get(api_url, headers=api_headers, data=json.dumps(processed_data), timeout=10)
         result.raise_for_status()
 
         # dump API data to json file
         file_name = 'api_values.json'
+        logging.info(f"Start dump api file {file_name} for {process_date}")
+
         with open(os.path.join(result_dir, file_name), 'w') as json_file:
             result_data = result.json()
             json.dump(result_data, json_file)
 
+        logging.info("Successfully loaded")
+
     except HTTPError:
         print('Error data API request!')
+        raise Exception
 
 
 def group_payload(used_date):
@@ -67,7 +78,7 @@ def group_payload(used_date):
         python_callable=rd_dreams_run,
         op_kwargs={'process_date': used_date},
         # op_args=used_date,
-        task_concurrency=3
+        task_concurrency=1
     )
 
 

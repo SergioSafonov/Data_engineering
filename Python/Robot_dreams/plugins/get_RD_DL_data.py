@@ -15,7 +15,7 @@ def rd_dreams_run(**kwargs):
     global authentication_token
 
     # exec_date = date.isoformat(kwargs["execution_date"])
-    exec_date = '2021-07-06'
+    exec_date = '2021-07-07'
 
     file_name = 'api_values.json'
     result_dir = os.path.join('/', 'datalake', 'bronze', 'rd_payload', exec_date)

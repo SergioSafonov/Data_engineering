@@ -5,7 +5,7 @@ import yaml
 # config = Config(os.path.join('config.yaml'))
 # config_set = config.get_config('daily_etl')
 
-with open(os.path.join('config.yaml'), 'r') as yaml_file:
+with open(os.path.join('../Config/config.yaml'), 'r') as yaml_file:
     config = yaml.safe_load(yaml_file)
 
 config_set = config.get('daily_etl')
