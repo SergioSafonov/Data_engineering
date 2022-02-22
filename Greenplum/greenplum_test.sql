@@ -129,3 +129,7 @@ WITH (
 DISTRIBUTED BY (client_id);
 
 select count(*), count(distinct client_id) from public.clients;				-- 1365	1365
+
+--------------------------------------------------------------------------------------------------
+
+select * from films;

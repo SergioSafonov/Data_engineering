@@ -61,7 +61,7 @@ where
 		
 -- 4. 
 -- 4.1
-select
+select distinct
 	f.title
 from 
 	film f
@@ -71,7 +71,7 @@ order by
 	title;
 
 -- 4.2
-select
+select distinct
 	f.title
 from 
 	film f
@@ -91,7 +91,7 @@ as
 	except 
 	select film_id from	inventory
 )
-select 
+select distinct 
 	f.title
 from 
 	film f
@@ -154,7 +154,7 @@ inner join
 group by
 	city
 order by 
-	isInactive desc;
+	isInactive desc, city;
 
 -- 7. 
 with category_cities
