@@ -20,14 +20,14 @@ rd_dreams_app:
   endpoint: "/out_of_stock"
   auth_prefix: "JWT "
   directory: "data/rd_payload"
+  file_name: "api_values.json"
   payload_dates:
-    - '2021-07-03'
-    - '2021-07-04'
+    - '2021-07-09'
 
 daily_etl:
   sources:
     api:
-      - "api name"
+      - "postgres_to_bronze"
     postgres_pagila:
       - actor
       - category
