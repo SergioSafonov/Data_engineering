@@ -96,7 +96,7 @@ RD_payload_DL_dag = DAG(
 
 
 PythonTask = PythonOperator(
-        task_id=f"RD_payload_DL_task",
+        task_id="RD_payload_DL_task",
         dag=RD_payload_DL_dag,
         python_callable=rd_dreams_run,
         # op_kwargs={'process_date': used_date},

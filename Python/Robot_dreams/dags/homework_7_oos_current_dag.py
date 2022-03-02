@@ -4,8 +4,7 @@ from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.dummy_operator import DummyOperator
 
-from get_config import get_payload_dates
-from load_from_sources import load_out_of_stocks_config
+from load_from_sources import load_out_of_stocks_current
 
 default_args = {
     "owner": "airflow",
@@ -16,23 +15,21 @@ default_args = {
 
 # Dag definition of loading process from Out_of_stocks API to Data Lake bronze
 
-def out_of_stocks(used_date):
-    return PythonOperator(
-        task_id=f"out_of_stocks_{used_date}",
-        dag=out_of_stocks_dag,
-        python_callable=load_out_of_stocks_config,
-        op_kwargs={'process_date': used_date},
-        task_concurrency=1
-    )
-
-
 out_of_stocks_dag = DAG(
-    dag_id='out_of_stocks_dag',
-    description='DAG for getting payload data from out_of_stocks API to Data Lake',
+    dag_id='out_of_stocks_current_dag',
+    description='DAG for getting payload current data from out_of_stocks API to Data Lake',
     schedule_interval='@daily',
     start_date=datetime(2022, 2, 24),
     default_args=default_args
 )
+
+out_of_stocks = PythonOperator(
+        task_id="out_of_stocks_current",
+        dag=out_of_stocks_dag,
+        python_callable=load_out_of_stocks_current,
+        task_concurrency=1,
+        provide_context=True
+    )
 
 dummy1 = DummyOperator(
     task_id="start_load",
@@ -43,5 +40,5 @@ dummy2 = DummyOperator(
     dag=out_of_stocks_dag
 )
 
-for payload_date in get_payload_dates():
-    dummy1 >> out_of_stocks(payload_date) >> dummy2
+dummy1 >> out_of_stocks >> dummy2
+
