@@ -1,0 +1,72 @@
+currency_app:
+  url: "http://api.exchangeratesapi.io/v1/"
+  context_date: "ds"
+  access_key: "a0ec6e79d368336768d78dd4bfc06e1f"
+  base: "EUR"
+  symbols:
+    - 'UAH'
+    - 'GBP'
+    - 'USD'
+    - 'PLN'
+    - 'RUB'
+  directory: "currencies"
+
+rd_dreams_app:
+  url: "https://robot-dreams-de-api.herokuapp.com"
+  content-type: "application/json"
+  username: "rd_dreams"
+  password: "djT6LasE"
+  auth_endpoint: "/auth"
+  endpoint: "/out_of_stock"
+  auth_prefix: "JWT "
+  directory: "rd_payload"
+  file_name: "api_values.json"
+  payload_dates:
+    - '2021-07-13'
+    - '2021-07-14'
+
+daily_etl:
+  sources:
+    postgres_dshopbu:
+      - aisles
+      - clients
+      - departments
+      - location_areas
+      - orders
+      - products
+      - store_types
+      - stores
+    postgres_dshop:
+      - aisles
+      - clients
+      - departments
+      - orders
+      - products
+    postgres_pagila:
+      - actor
+      - address
+      - category
+      - city
+      - customer
+      - film
+      - film-actor
+      - film_category
+      - inventory
+      - language
+      - rental
+  silver:
+    - location_area
+    - aisle
+    - department
+    - store_type
+    - client
+    - product
+    - store
+    - order
+  gold:
+    - client
+    - product
+    - store
+    - order
+    - out_of_stock
+    - currency_rate

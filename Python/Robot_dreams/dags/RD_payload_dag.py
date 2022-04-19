@@ -20,7 +20,7 @@ payload_dates = get_payload_dates()
 def rd_dreams_run(process_date):
     global authentication_token
 
-    start_dir = os.path.join('/', 'home', 'user')
+    start_dir = os.path.join('/', 'home', 'user', 'data')
     data_path = config_data['directory']
 
     try:

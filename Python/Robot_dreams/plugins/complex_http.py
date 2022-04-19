@@ -35,12 +35,11 @@ class CurrencyAPISaveHttpOperator(SimpleHttpOperator):  # define child extended 
                 raise AirflowException("Response check returned False.")
 
         if self.save_flag:  # added check for save_flag
-            date_dir = self.endpoint
-            if date_dir == 'latest':
+            if self.endpoint == 'latest':
                 date_dir = str(date.today())  # - timedelta(days=1))
 
             # '/home/user/data/currencies/[yyyy-mm-dd]/'
-            directory = os.path.join('/', 'home', 'user', self.save_path, date_dir)
+            directory = os.path.join('/', 'home', 'user', 'data', self.save_path, date_dir)
             os.makedirs(directory, exist_ok=True)
             file_name = self.data['symbols'] + '_' + self.data['base'] + '.json'  # added var file_name
 
@@ -49,5 +48,5 @@ class CurrencyAPISaveHttpOperator(SimpleHttpOperator):  # define child extended 
                 data = response.json()
                 json.dump(data, json_file)
 
-        if self.xcom_push_flag:  # if need to store result into etc Scoms
+        if self.xcom_push_flag:  # if you need to store result into etc. Scoms
             return response.text

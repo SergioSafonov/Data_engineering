@@ -5,8 +5,8 @@ from airflow.operators.python_operator import PythonOperator
 from airflow.operators.dummy_operator import DummyOperator
 
 from get_config import get_payload_dates
-from load_from_sources import out_of_stocks_config_load
-from load_to_silver import out_of_stocks_config_silver_load
+from etl_bronze import out_of_stocks_config_load
+from etl_silver import out_of_stocks_config_silver_load
 
 default_args = {
     "owner": "airflow",

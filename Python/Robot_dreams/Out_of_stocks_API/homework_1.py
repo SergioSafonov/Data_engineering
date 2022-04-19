@@ -51,7 +51,7 @@ def get_auth_token(config_data):
 def rd_dreams_run(config_data, process_date, token):
     try:
         # check date folder
-        data_path = os.path.join('..', config_data['directory'], process_date)
+        data_path = os.path.join('/', 'home', 'user', 'data', config_data['directory'], process_date)
         os.makedirs(data_path, exist_ok=True)
 
         # read API data from config_data

@@ -20,7 +20,7 @@ def group_currency(currency):
         dag=currency_http_dag,
         method="GET",
         http_conn_id="currency_connection",
-        endpoint=config_set['last_url'],
+        endpoint="latest",
         data={'access_key': config_set['access_key'], 'base': config_set['base'], 'symbols': currency},
         xcom_push=True,
         save=True,

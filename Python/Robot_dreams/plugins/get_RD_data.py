@@ -36,7 +36,7 @@ def rd_dreams_run(process_date):
     try:
         # check date folder
         data_path = config_data['directory']
-        result_dir = os.path.join('/', 'home', 'user', data_path, process_date)
+        result_dir = os.path.join('/', 'home', 'user', 'data', data_path, process_date)
         os.makedirs(os.path.join(result_dir), exist_ok=True)
 
         # read API data from config_data
