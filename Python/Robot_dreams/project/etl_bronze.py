@@ -3,74 +3,72 @@ import logging
 import json
 import psycopg2
 import requests
-from datetime import date
 
 from requests.exceptions import HTTPError
 
 from airflow.operators.http_operator import SimpleHttpOperator
-from airflow.hooks.base_hook import BaseHook
 from airflow.hooks.http_hook import HttpHook
 from airflow.exceptions import AirflowException
 
-from hdfs import InsecureClient
-
-from get_config import get_config
+from get_config import get_config, get_hadoop_path, get_table_types
 
 
-def init_bronze_load():
-    bronze_path = os.path.join('/', 'datalake', 'bronze')
+def dshopbu_bronze_load(table, client_hdfs, pg_conn, **kwargs):
+    process_date = kwargs["ds"]         # today
+    order_date = kwargs["prev_ds"]      # yesterday
 
-    # HDFS credentials definition (from Airflow connections)
-    hdfs_conn = BaseHook.get_connection('datalake_hdfs')
-    client_hdfs = InsecureClient(f"{hdfs_conn.host}:{hdfs_conn.port}/", user=hdfs_conn.login)
-
-    return bronze_path, client_hdfs
-
-
-def dshopbu_bronze_load(table, **kwargs):
-    process_date = kwargs["execution_date"].strftime('%Y-%m-%d')
+    db_name = pg_conn.schema
     file_name = table + '.csv'
 
     try:
-        bronze_path, client_hdfs = init_bronze_load()
+        bronze_path = get_hadoop_path('bronze')
 
-        pg_conn = BaseHook.get_connection('postgres_dshopbu')
         pg_creds = {
             'host': pg_conn.host,
             'port': pg_conn.port,
-            'database': pg_conn.schema,
+            'database': db_name,
             'user': pg_conn.login,
             'password': pg_conn.password
         }
 
-        logging.info(f"Writing table {table} from {pg_conn.host}:{pg_conn.schema} to Bronze")
+        logging.info(f"Writing table {table} from {pg_conn.host}:{db_name} to Bronze")
+
+        source_column_list, target_column_list, rename_str, csv_schema_str = get_table_types(table)
 
         with psycopg2.connect(**pg_creds) as pg_connection:
             cursor = pg_connection.cursor()
 
-            with client_hdfs.write(os.path.join(bronze_path, pg_conn.schema, table, process_date, file_name)
+            with client_hdfs.write(os.path.join(bronze_path, db_name, table, process_date, file_name)
                     , overwrite=True) as csv_file:
-                cursor.copy_expert(f"COPY {table} TO STDOUT WITH HEADER CSV", csv_file)
+                if table != 'orders':
+                    cursor.copy_expert(f"COPY {table} TO STDOUT WITH HEADER CSV", csv_file)
+                else:       # for orders fact table copy only yesterday data (by order_date)
+                    cursor.copy_expert(
+                        f"COPY (SELECT {source_column_list} FROM public.{table}"
+                        f" WHERE order_date BETWEEN '{order_date} 00:00:00' AND '{order_date} 23:59:59')"
+                        " TO STDOUT WITH HEADER CSV", csv_file)
 
-        logging.info(f"Successfully loaded {table} from {pg_conn.host}:{pg_conn.schema} to Bronze")
+        logging.info(f"Successfully loaded {table} from {pg_conn.host}:{db_name} to Bronze")
 
     except HTTPError:
-        raise AirflowException(f"Error load {table} from {pg_conn.host}:{pg_conn.schema} to Bronze")
+        raise AirflowException(f"Error load {table} from {pg_conn.host}:{db_name} to Bronze")
 
 
-def out_of_stocks_config_load(process_date):
-    out_of_stocks_load(process_date)
+def out_of_stocks_config_load(process_date, client_hdfs):
+    out_of_stocks_load(process_date, client_hdfs)
 
 
-def out_of_stocks_current_load(**kwargs):
-    process_date = kwargs["execution_date"].strftime('%Y-%m-%d')
+def out_of_stocks_current_load(client_hdfs, **kwargs):
+    process_date = kwargs["ds"]
 
-    out_of_stocks_load(process_date)
+    out_of_stocks_load(process_date, client_hdfs)
 
 
-def out_of_stocks_load(process_date):
+def out_of_stocks_load(process_date, client_hdfs):
     config = get_config()
     config_data = config.get('rd_dreams_app')
+
+    bronze_path = get_hadoop_path('bronze')
 
     try:
         # read authentication data from config
@@ -89,8 +87,6 @@ def out_of_stocks_load(process_date):
         raise AirflowException("Error get auth token!")
 
     try:
-        bronze_path, client_hdfs = init_bronze_load()
-
         dir_name = config_data['directory']
         file_name = config_data['file_name']
 
@@ -120,12 +116,13 @@ def out_of_stocks_load(process_date):
 
 class CurrencyAPISaveHttpOperator(SimpleHttpOperator):  # define child extended class for SimpleHttpOperator
 
-    def __init__(self, save_hdfs, save_path, context_date,  *args, **kwargs):
+    def __init__(self, save_hdfs, client_hdfs, currency_path, context_date, *args, **kwargs):
         super(CurrencyAPISaveHttpOperator, self).__init__(*args, **kwargs)  # init as a parent - SimpleHttpOperator
 
-        self.save_flag = save_hdfs          # added save_flag as input parameter
-        self.save_path = save_path          # added save_path as input parameter
-        self.context_date = context_date    # added save_path as input parameter
+        self.save_flag = save_hdfs  # added save_flag as input parameter
+        self.client_hdfs = client_hdfs
+        self.currency_path = currency_path
+        self.context_date = context_date
 
     def execute(self, context):
         # initially copied from SimpleHttpOperator execute method
@@ -153,16 +150,18 @@ class CurrencyAPISaveHttpOperator(SimpleHttpOperator):  # define child extended 
             if not self.response_check(response):
                 raise AirflowException("Currency API response check returned False.")
 
+        api_data = response.json()
+
         if self.save_flag:  # added check for save_flag
-            bronze_path, client_hdfs = init_bronze_load()
+            bronze_path = get_hadoop_path('bronze')
 
-            directory = os.path.join(bronze_path, self.save_path, process_date)
+            directory = os.path.join(bronze_path, self.currency_path, process_date)
             # os.makedirs(directory, exist_ok=True)
-            file_name = self.data['symbols'] + '_' + self.data['base'] + '.json'
-            api_data = response.json()
+            file_name = self.data['symbols'] + '_' + self.data['currency_base'] + '.json'
 
-            with client_hdfs.write(os.path.join(directory, file_name),
-                                   encoding='utf-8', overwrite=True, blocksize=1048576, replication=1) as json_file:
+            with self.client_hdfs.write(os.path.join(directory, file_name),
+                                        encoding='utf-8', overwrite=True, blocksize=1048576,
+                                        replication=1) as json_file:
                 json.dump(api_data, json_file)
 
             self.log.info(f"Writing to file {os.path.join(directory, file_name)}")

@@ -1,6 +1,21 @@
+hadoop_path:
+  start_dir: 'datalake'
+  bronze_path: 'bronze'
+  silver_path: 'silver'
+  postgres_db: 'dshop_bu'
+
+connections:
+  hdfs: 'datalake_hdfs'
+  currency_api: 'currency_connection'
+  postgres: 'oltp_postgres'
+  postgres_pagila: 'postgres_pagila'
+  postgres_dshop: 'postgres_dshop'
+  postgres_dshop_bu: 'postgres_dshopbu'
+  greenplum: 'greenplum_datamart'
+
 currency_app:
   url: "http://api.exchangeratesapi.io/v1/"
-  context_date: "ds"
+  endpoint: "latest"
   access_key: "a0ec6e79d368336768d78dd4bfc06e1f"
   base: "EUR"
   symbols:
@@ -10,6 +25,7 @@ currency_app:
     - 'PLN'
     - 'RUB'
   directory: "currencies"
+  context_date: "ds"
 
 rd_dreams_app:
   url: "https://robot-dreams-de-api.herokuapp.com"
@@ -22,20 +38,116 @@ rd_dreams_app:
   directory: "rd_payload"
   file_name: "api_values.json"
   payload_dates:
-    - '2021-07-13'
-    - '2021-07-14'
+    - '2021-07-09'
+    - '2021-07-10'
 
 daily_etl:
   sources:
     postgres_dshopbu:
-      - aisles
-      - clients
-      - departments
-      - location_areas
-      - orders
-      - products
-      - store_types
-      - stores
+       aisles:
+           aisle_id:
+              - name: "aisle_id"
+              - type: "Integer"
+              - nullable: "False"
+           aisle:
+              - name: "aisle_name"
+              - type: "String"
+              - nullable: "True"
+       clients:
+           id:
+              - name: "client_id"
+              - type: "Integer"
+              - nullable: "False"
+           fullname:
+              - name: "client_name"
+              - type: "String"
+              - nullable: "True"
+           location_area_id:
+              - name: "location_area_id"
+              - type: "Integer"
+              - nullable: "True"
+       departments:
+           department_id:
+              - name: "department_id"
+              - type: "Integer"
+              - nullable: "False"
+           department:
+              - name: "department_name"
+              - type: "String"
+              - nullable: "True"
+       location_areas:
+           area_id:
+              - name: "location_area_id"
+              - type: "Integer"
+              - nullable: "False"
+           area:
+              - name: "location_area_name"
+              - type: "String"
+              - nullable: "True"
+       orders:
+           order_id:
+              - name: "order_id"
+              - type: "Integer"
+              - nullable: "True"
+           product_id:
+              - name: "product_id"
+              - type: "Integer"
+              - nullable: "True"
+           client_id:
+              - name: "client_id"
+              - type: "Integer"
+              - nullable: "True"
+           store_id:
+              - name: "store_id"
+              - type: "Integer"
+              - nullable: "True"
+           quantity:
+             - name: "quantity"
+             - type: "Integer"
+             - nullable: "True"
+           order_date:
+              - name: "order_date"
+              - type: "Date"
+              - nullable: "True"
+       products:
+           product_id:
+              - name: "product_id"
+              - type: "Integer"
+              - nullable: "False"
+           product_name:
+              - name: "product_name"
+              - type: "String"
+              - nullable: "True"
+           aisle_id:
+              - name: "aisle_id"
+              - type: "Integer"
+              - nullable: "True"
+           department_id:
+              - name: "department_id"
+              - type: "Integer"
+              - nullable: "True"
+       store_types:
+           store_type_id:
+              - name: "store_type_id"
+              - type: "Integer"
+              - nullable: "False"
+           type:
+              - name: "store_type_name"
+              - type: "String"
+              - nullable: "True"
+       stores:
+           store_id:
+              - name: "store_id"
+              - type: "Integer"
+              - nullable: "False"
+           location_area_id:
+              - name: "location_area_id"
+              - type: "Integer"
+              - nullable: "True"
+           store_type_id:
+              - name: "store_type_id"
+              - type: "Integer"
+              - nullable: "True"
     postgres_dshop:
       - aisles
       - clients
@@ -67,6 +179,7 @@ daily_etl:
     - client
     - product
     - store
+    - date
     - order
-    - out_of_stock
-    - currency_rate
+
+

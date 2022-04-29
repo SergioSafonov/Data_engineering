@@ -6,21 +6,21 @@ import psycopg2
 from hdfs import InsecureClient  # library docs https://hdfscli.readthedocs.io/en/latest/index.html
 
 postgres_dshop_creds = {
-    'host': '192.168.1.56',
+    'host': '192.168.0.16',
     'port': 5432,
     'database': 'dshop',
     'user': 'pguser',
     'password': 'secret'
 }
 postgres_pagila_creds = {
-    'host': '192.168.1.56',
+    'host': '192.168.0.16',
     'port': 5432,
     'database': 'pagila',
     'user': 'pguser',
     'password': 'secret'
 }
 greenplum_creds = {
-    'host': '192.168.1.56',
+    'host': '192.168.0.16',
     'port': '5433',
     'database': 'gp',
     'user': 'gpuser',
