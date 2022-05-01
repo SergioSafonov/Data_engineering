@@ -131,6 +131,8 @@ select * from public.fact_currency_rate order by currency,rate_date;
 /*
 insert into public.fact_currency_rate (currency_base,currency,rate_date,rate_month,rate)
 	select distinct currency_base,currency,rate_date,rate_month,rate from public.fact_currency_rate1
+
+delete from public.fact_currency_rate where rate = 1.054574
 */
 ----------------------------------------------
 
@@ -161,4 +163,6 @@ select count(*), process_date from public.fact_out_of_stock group by process_dat
 1762	2021-07-06
 1846	2021-07-07
 1514	2021-07-08
+3224	2021-07-09
+1527	2021-07-10
 */
